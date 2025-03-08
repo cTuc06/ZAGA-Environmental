@@ -49,6 +49,53 @@
             padding: 2rem 0;
             margin-top: 4rem;
         }
+        
+        .calendar-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .calendar-weekday {
+            font-weight: bold;
+            width: 14.28%;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: default;
+            font-weight: 500;
+        }
+        
+        .calendar-day.available {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+        
+        .calendar-day.other-month.available {
+            background-color: var(--secondary-color);
+            color: white;
+            opacity: 0.7;
+        }
+        
+        .calendar-day.today {
+            border: 2px solid var(--secondary-color);
+        }
     </style>
 </head>
 <body>
@@ -165,6 +212,194 @@
         </div>
     </footer>
     
+    <!-- Sign Up Modal with Calendar -->
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--primary-color); color: white;">
+                    <h5 class="modal-title" id="signupModalLabel"><i class="fas fa-calendar-alt me-2"></i>Available Consultation Days</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <h4 id="currentMonthYear" class="mb-3"></h4>
+                        <div class="calendar-container">
+                            <div class="calendar-header d-flex justify-content-between align-items-center mb-2">
+                                <div class="calendar-weekday">Sun</div>
+                                <div class="calendar-weekday">Mon</div>
+                                <div class="calendar-weekday">Tue</div>
+                                <div class="calendar-weekday">Wed</div>
+                                <div class="calendar-weekday">Thu</div>
+                                <div class="calendar-weekday">Fri</div>
+                                <div class="calendar-weekday">Sat</div>
+                            </div>
+                            <div id="calendarDays" class="calendar-days"></div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-center gap-4 flex-wrap">
+                            <div class="d-flex align-items-center">
+                                <div style="width: 15px; height: 15px; background-color: var(--primary-color); border-radius: 50%; margin-right: 5px;"></div>
+                                <span class="calendar-legend-text">Available Days (Tue & Thu)</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div style="width: 15px; height: 15px; background-color: var(--secondary-color); opacity: 0.7; border-radius: 50%; margin-right: 5px;"></div>
+                                <span>Next Month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="https://forms.gle/4LZfqGES8environmental" target="_blank" class="btn btn-primary btn-lg px-4" id="googleFormLink">
+                        <i class="fab fa-google me-2"></i>Go to Google Form
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track which days to highlight
+            let highlightMode = 'tuesday-thursday'; // Default mode
+            
+            // Initialize the calendar when the modal is shown
+            const signupModal = document.getElementById('signupModal');
+            signupModal.addEventListener('show.bs.modal', function(event) {
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                
+                // Extract service info from data-* attributes
+                const service = button.getAttribute('data-service');
+                const days = button.getAttribute('data-days');
+                
+                // Update the modal title based on the service
+                if (service) {
+                    document.getElementById('signupModalLabel').innerHTML = 
+                        `<i class="fas fa-calendar-alt me-2"></i>Available Consultation Days: ${service}`;
+                    
+                    // Update the Google Form link based on the service
+                    const googleFormLink = document.getElementById('googleFormLink');
+                    if (service === 'Environmental Consulting') {
+                        googleFormLink.href = 'https://forms.gle/C1bup2dL2Xsqi3tE8';
+                    } else if (service === 'Sustainable Solutions') {
+                        googleFormLink.href = 'https://forms.gle/DFbrLrbW8sPS1uCt6';
+                    }
+                }
+                
+                // Set highlight mode based on the button clicked
+                if (days === 'weekdays') {
+                    highlightMode = 'weekdays';
+                    document.querySelector('.calendar-legend-text').textContent = 'Available Days (Mon-Fri)';
+                } else {
+                    highlightMode = 'tuesday-thursday';
+                    document.querySelector('.calendar-legend-text').textContent = 'Available Days (Tue & Thu)';
+                }
+                
+                // Render the calendar with the appropriate highlighting
+                renderCalendar();
+            });
+            
+            function renderCalendar() {
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+                
+                // Set the month and year in the header
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                document.getElementById('currentMonthYear').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                
+                // Get the first day of the month
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const startingDay = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                
+                // Get the last day of the month
+                const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                const totalDays = lastDay.getDate();
+                
+                // Get the last day of the previous month
+                const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+                
+                // Calculate total cells needed (previous month days + current month days + next month days)
+                const totalCells = Math.ceil((startingDay + totalDays) / 7) * 7;
+                
+                // Clear previous calendar
+                const calendarDays = document.getElementById('calendarDays');
+                calendarDays.innerHTML = '';
+                
+                // Add days from previous month
+                for (let i = 0; i < startingDay; i++) {
+                    const day = prevMonthLastDay - startingDay + i + 1;
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day other-month';
+                    dayElement.textContent = day;
+                    calendarDays.appendChild(dayElement);
+                }
+                
+                // Add days from current month
+                for (let i = 1; i <= totalDays; i++) {
+                    const date = new Date(currentYear, currentMonth, i);
+                    const dayOfWeek = date.getDay();
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.textContent = i;
+                    
+                    // Check if it's today
+                    if (date.getDate() === today.getDate() && 
+                        date.getMonth() === today.getMonth() && 
+                        date.getFullYear() === today.getFullYear()) {
+                        dayElement.classList.add('today');
+                    }
+                    
+                    // Highlight days based on the selected mode
+                    if (highlightMode === 'tuesday-thursday') {
+                        // Tuesday (2) or Thursday (4)
+                        if (dayOfWeek === 2 || dayOfWeek === 4) {
+                            // Only highlight days that are not in the past
+                            if (date >= today) {
+                                dayElement.classList.add('available');
+                            }
+                        }
+                    } else if (highlightMode === 'weekdays') {
+                        // Monday (1) through Friday (5)
+                        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                            // Only highlight days that are not in the past
+                            if (date >= today) {
+                                dayElement.classList.add('available');
+                            }
+                        }
+                    }
+                    
+                    calendarDays.appendChild(dayElement);
+                }
+                
+                // Add days from next month
+                const remainingCells = totalCells - (startingDay + totalDays);
+                for (let i = 1; i <= remainingCells; i++) {
+                    const date = new Date(currentYear, currentMonth + 1, i);
+                    const dayOfWeek = date.getDay();
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day other-month';
+                    dayElement.textContent = i;
+                    
+                    // Highlight days in next month based on the selected mode
+                    if (highlightMode === 'tuesday-thursday') {
+                        // Tuesday (2) or Thursday (4)
+                        if (dayOfWeek === 2 || dayOfWeek === 4) {
+                            dayElement.classList.add('available');
+                        }
+                    } else if (highlightMode === 'weekdays') {
+                        // Monday (1) through Friday (5)
+                        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                            dayElement.classList.add('available');
+                        }
+                    }
+                    
+                    calendarDays.appendChild(dayElement);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
