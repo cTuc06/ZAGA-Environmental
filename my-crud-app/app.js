@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const JSONdb = require('simple-json-db');
+const nodemailer = require('nodemailer');
 const app = express();
 const db = new JSONdb('./data.json');
 
@@ -16,6 +17,46 @@ app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
   const items = db.get('items') || [];
   res.render('index', { items: items });
+});
+
+// Contact form submission
+app.post('/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    
+    // Create a transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'ges.service.no.reply@gmail.com',
+        pass: process.env.EMAIL_PASSWORD || 'qzki gyhi wgjz czni' // Use environment variable in production
+      }
+    });
+    
+    // Email content
+    const mailOptions = {
+      from: 'ges.service.no.reply@gmail.com',
+      to: 'ges.service.no.reply@gmail.com',
+      subject: `Contact Form: ${subject}`,
+      html: `
+        <h3>New Contact Form Submission</h3>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+      `
+    };
+    
+    // Send email
+    await transporter.sendMail(mailOptions);
+    
+    // Return success response
+    res.status(200).json({ success: true, message: 'Your message has been sent successfully!' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send message. Please try again later.' });
+  }
 });
 
 // Start the server
