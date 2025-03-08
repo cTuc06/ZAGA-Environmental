@@ -1,0 +1,236 @@
+function myFunction() {
+  var recipient = "ges.service.no.reply@gmail.com";
+  var subject = "SERVICE WITH GES NO-REPLY";
+  var personName = "John"; // Replace with actual name variable
+  var serviceTime = "2:00 PM"; // Replace with actual time variable
+  var serviceDate = "January 1, 2023"; // Replace with actual date variable
+  
+  // Create a professional HTML email body with styling
+  var htmlBody = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>GES Service Confirmation</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+          font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+          line-height: 1.6;
+          color: #333333;
+          margin: 0;
+          padding: 0;
+          background-color: #f9f9f9;
+        }
+        .email-container {
+          max-width: 650px;
+          margin: 0 auto;
+          background-color: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .email-header {
+          background: linear-gradient(135deg, #4b2d83 0%, #6a3cb5 50%, #8a4fff 100%);
+          color: white;
+          padding: 35px 30px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .email-header::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: url('https://i.imgur.com/JfVcTWm.png');
+          background-size: cover;
+          opacity: 0.1;
+          mix-blend-mode: overlay;
+        }
+        .email-logo {
+          font-size: 32px;
+          font-weight: 700;
+          margin-bottom: 15px;
+          letter-spacing: 1px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          position: relative;
+        }
+        .email-title {
+          font-size: 24px;
+          margin: 0;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          position: relative;
+        }
+        .email-body {
+          padding: 40px 30px;
+          color: #444;
+        }
+        .email-section {
+          margin-bottom: 28px;
+          transition: transform 0.3s ease;
+        }
+        .email-section:hover {
+          transform: translateX(5px);
+        }
+        .email-label {
+          font-weight: 600;
+          color: #4b2d83;
+          margin-bottom: 8px;
+          display: block;
+          font-size: 15px;
+          letter-spacing: 0.3px;
+        }
+        .email-value {
+          background-color: #f8f9ff;
+          padding: 14px 18px;
+          border-radius: 8px;
+          border-left: 4px solid #6a3cb5;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          font-size: 16px;
+        }
+        .email-message {
+          background-color: #f8f9ff;
+          padding: 18px;
+          border-radius: 8px;
+          border-left: 4px solid #6a3cb5;
+          white-space: pre-line;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .email-footer {
+          background-color: #f5f5f7;
+          padding: 25px;
+          text-align: center;
+          color: #666666;
+          font-size: 14px;
+          border-top: 1px solid #eeeeee;
+          position: relative;
+        }
+        .email-footer::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #4b2d83, #6a3cb5, #8a4fff);
+        }
+        .highlight {
+          color: #6a3cb5;
+          font-weight: 600;
+        }
+        p {
+          margin-bottom: 16px;
+          font-size: 15px;
+        }
+        .signature {
+          margin-top: 35px;
+          padding-top: 20px;
+          border-top: 1px dashed #e0e0e0;
+        }
+        .btn {
+          display: inline-block;
+          background: linear-gradient(135deg, #4b2d83 0%, #6a3cb5 100%);
+          color: white;
+          padding: 12px 24px;
+          border-radius: 50px;
+          text-decoration: none;
+          font-weight: 500;
+          margin: 20px 0;
+          box-shadow: 0 4px 10px rgba(106, 60, 181, 0.3);
+          transition: all 0.3s ease;
+        }
+        .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(106, 60, 181, 0.4);
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="email-header">
+          <div class="email-logo"><i class="fas fa-leaf"></i> GES</div>
+          <h1 class="email-title">Service Confirmation</h1>
+        </div>
+        
+        <div class="email-body">
+          <p>Dear <span class="highlight">${personName}</span>,</p>
+          
+          <p>Thank you for scheduling a service with Gonzaga Environmental Services. We're delighted to confirm your upcoming appointment.</p>
+          
+          <div class="email-section">
+            <span class="email-label">Service Date:</span>
+            <div class="email-value">${serviceDate}</div>
+          </div>
+          
+          <div class="email-section">
+            <span class="email-label">Service Time:</span>
+            <div class="email-value">${serviceTime}</div>
+          </div>
+          
+          <p>Please arrive 10 minutes before your scheduled time. Our team is prepared to provide you with an exceptional service experience.</p>
+          
+          ${getCalendarLink(serviceDate, serviceTime, "GES Service Appointment", "Gonzaga Environmental Services Appointment")}
+          
+          <p>We look forward to your participation and hope you have a productive and rewarding experience with us.</p>
+          
+          <div class="signature">
+            <p>Best regards,</p>
+            <p class="highlight">GES Service Team</p>
+          </div>
+        </div>
+        
+        <div class="email-footer">
+          <p>This is an automated message. Please do not reply to this email.</p>
+          <p>&copy; ${new Date().getFullYear()} Gonzaga Environmental Services. All rights reserved.</p>
+          <p>19 I St NW, Washington, DC 20001 | (202) 336-7100</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+  
+  // Plain text version as fallback
+  var plainBody = "Dear " + personName + ",\n\n" +
+                  "Thank you for scheduling a service with Gonzaga Environmental Services. We're delighted to confirm your upcoming appointment.\n\n" +
+                  "Service Date: " + serviceDate + "\n" +
+                  "Service Time: " + serviceTime + "\n\n" +
+                  "Please arrive 10 minutes before your scheduled time. Our team is prepared to provide you with an exceptional service experience.\n\n" +
+                  "We look forward to your participation and hope you have a productive and rewarding experience with us.\n\n" +
+                  "Best regards,\n" +
+                  "GES Service Team\n\n" +
+                  "Gonzaga Environmental Services\n" +
+                  "19 I St NW, Washington, DC 20001 | (202) 336-7100";
+  
+  // Send email immediately with HTML formatting
+  GmailApp.sendEmail(recipient, subject, plainBody, {htmlBody: htmlBody});
+  
+  Logger.log('Email sent immediately to: ' + recipient);
+}
+
+// Function to generate calendar link
+function getCalendarLink(date, time, title, description) {
+  // Parse the date and time
+  var dateObj = new Date(date + " " + time);
+  
+  // Create end time (1 hour after start)
+  var endTime = new Date(dateObj.getTime() + 60 * 60 * 1000);
+  
+  // Format dates for Google Calendar
+  var startDate = dateObj.toISOString().replace(/-|:|\.\d+/g, "");
+  var endDate = endTime.toISOString().replace(/-|:|\.\d+/g, "");
+  
+  // Create Google Calendar link
+  var calendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE" +
+                    "&text=" + encodeURIComponent(title) +
+                    "&dates=" + startDate + "/" + endDate +
+                    "&details=" + encodeURIComponent(description) +
+                    "&location=19%20I%20St%20NW%2C%20Washington%2C%20DC%2020001";
+  
+  return `<a href="${calendarUrl}" target="_blank" class="btn" style="color: white;">Add to Calendar</a>`;
+}

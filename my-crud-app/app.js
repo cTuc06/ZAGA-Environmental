@@ -19,21 +19,18 @@ app.get('/', (req, res) => {
   res.render('index', { items: items });
 });
 
-// Contact form submission
 app.post('/contact', async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
     
-    // Create a transporter
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'ges.service.no.reply@gmail.com',
-        pass: process.env.EMAIL_PASSWORD || 'qzki gyhi wgjz czni' // Use environment variable in production
+        pass: process.env.EMAIL_PASSWORD || 'qzki gyhi wgjz czni'
       }
     });
     
-    // Email content
     const mailOptions = {
       from: 'ges.service.no.reply@gmail.com',
       to: 'ges.service.no.reply@gmail.com',
