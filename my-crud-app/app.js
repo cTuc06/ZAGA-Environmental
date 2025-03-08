@@ -39,12 +39,124 @@ app.post('/contact', async (req, res) => {
       to: 'ges.service.no.reply@gmail.com',
       subject: `Contact Form: ${subject}`,
       html: `
-        <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Contact Form Submission</title>
+          <style>
+            body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              line-height: 1.6;
+              color: #333333;
+              margin: 0;
+              padding: 0;
+              background-color: #f9f9f9;
+            }
+            .email-container {
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .email-header {
+              background: linear-gradient(135deg, #56299A 0%, #7B42C3 100%);
+              color: white;
+              padding: 30px;
+              text-align: center;
+            }
+            .email-logo {
+              font-size: 28px;
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+            .email-title {
+              font-size: 22px;
+              margin: 0;
+              font-weight: normal;
+            }
+            .email-body {
+              padding: 30px;
+            }
+            .email-section {
+              margin-bottom: 25px;
+            }
+            .email-label {
+              font-weight: bold;
+              color: #56299A;
+              margin-bottom: 5px;
+              display: block;
+            }
+            .email-value {
+              background-color: #f5f5f5;
+              padding: 12px 15px;
+              border-radius: 6px;
+              border-left: 3px solid #7B42C3;
+            }
+            .email-message {
+              background-color: #f5f5f5;
+              padding: 15px;
+              border-radius: 6px;
+              border-left: 3px solid #7B42C3;
+              white-space: pre-line;
+            }
+            .email-footer {
+              background-color: #f5f5f5;
+              padding: 20px;
+              text-align: center;
+              color: #666666;
+              font-size: 14px;
+              border-top: 1px solid #eeeeee;
+            }
+            .highlight {
+              color: #56299A;
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-container">
+            <div class="email-header">
+              <div class="email-logo"><i class="fas fa-leaf"></i> GES</div>
+              <h1 class="email-title">New Contact Form Submission</h1>
+            </div>
+            
+            <div class="email-body">
+              <p>A new message has been submitted through the Gonzaga Environmental Services website contact form.</p>
+              
+              <div class="email-section">
+                <span class="email-label">Name:</span>
+                <div class="email-value">${name}</div>
+              </div>
+              
+              <div class="email-section">
+                <span class="email-label">Email Address:</span>
+                <div class="email-value">${email}</div>
+              </div>
+              
+              <div class="email-section">
+                <span class="email-label">Subject:</span>
+                <div class="email-value">${subject}</div>
+              </div>
+              
+              <div class="email-section">
+                <span class="email-label">Message:</span>
+                <div class="email-message">${message}</div>
+              </div>
+              
+              <p>Please respond to this inquiry within 24-48 hours.</p>
+            </div>
+            
+            <div class="email-footer">
+              <p>&copy; ${new Date().getFullYear()} Gonzaga Environmental Services. All rights reserved.</p>
+              <p>19 I St NW, Washington, DC 20001 | (202) 336-7100</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
     
